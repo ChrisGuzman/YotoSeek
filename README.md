@@ -1,39 +1,57 @@
 # YotoSeek
 
-Objective: "Build a multi-tenant Ktor web application called 'YotoSeek' that allows users to sync Spotify playlists/albums to their Yoto libraries via a shared slskd instance. The UI must be high-performance and use HTMX to avoid a JavaScript build process."
+**YotoSeek** is a multi-tenant Ktor web application that bridges the gap between Spotify playlists/albums and Yoto libraries using a shared **slskd** instance for media retrieval. It leverages HTMX for a high-performance, reactive UI without the complexity of a heavy JavaScript build chain.
 
-1. Architecture & Tech Stack:
+## Features (Planned/In-Progress)
 
-    Language/Framework: Kotlin 2.x with Ktor 3.4+ (Server & Client).
+*   **Spotify & Yoto Integration**: Syncs music from Spotify to Yoto cards.
+*   **Multi-User Support**: Individual sessions with Spotify OAuth and Yoto Device Flow authentication.
+*   **Reactive UI**: Built with Ktor HTML DSL and HTMX for real-time status updates.
+*   **Smart Downloading**: Searches Slskd for high-quality audio (lossless or 320kbps).
+*   **Background Processing**: Handles queuing, searching, downloading, and uploading asynchronously.
 
-    Frontend: Ktor HTML DSL + HTMX (for live-updating fragments) + Tailwind CSS (via CDN).
+## Tech Stack
 
-    Database: SQLite with Exposed ORM to manage Users (tokens, IDs) and Tasks (status, metadata).
+*   **Language**: Kotlin 2.x
+*   **Server**: Ktor 3.x (Netty engine)
+*   **Database**: SQLite with Exposed ORM
+*   **Frontend**: Ktor HTML DSL + HTMX + Tailwind CSS (CDN)
+*   **Build Tool**: Gradle (Kotlin DSL)
 
-    Concurrency: Use Kotlin Coroutines with a singleton WorkerManager to handle background downloads.
+## Development Setup
 
-2. Multi-User Authentication:
+### Prerequisites
 
-    Spotify OAuth: Implement Ktor Authentication for Spotify login. Store refresh_tokens to allow background sync.
+1.  **Java JDK 21+**: Ensure you have a compatible Java Development Kit installed.
+    *   Verify with `java -version`.
+2.  **Slskd Instance**: You need access to a running instance of [slskd](https://github.com/slskd/slskd).
+    *   You will need the `URL` and `API Key` for this instance.
 
-    Yoto Device Flow: Implement a /settings page that initiates the Yoto Device Authorization Flow, displaying the 6-digit code for users to pair their account.
+### Running Locally
 
-    Session Management: Use Ktor Sessions (Cookie-based) to isolate user data.
+1.  **Clone the Repository**:
+    ```bash
+    git clone <repository-url>
+    cd yotoseek
+    ```
 
-3. The Reactive Dashboard (HTMX):
+2.  **Configuration**:
+    *   *Note: Configuration via environment variables or a config file is currently being implemented. For now, the application starts a basic server on port 8080.*
 
-    Input: A single text input for Spotify URLs (Album or Playlist).
+3.  **Run the Server**:
+    Use the Gradle wrapper to start the application in development mode:
+    ```bash
+    ./gradlew run
+    ```
+    The server will start at `http://0.0.0.0:8080`.
 
-    Live Status Board: A table that uses hx-get with a 10-second trigger="every 10s" to poll /api/tasks and swap in an HTML fragment.
+4.  **Run Tests**:
+    ```bash
+    ./gradlew test
+    ```
 
-    States: Track each item as: QUEUED, SEARCHING, DOWNLOADING (X%), UPLOADING, COMPLETE.
+### Project Structure
 
-4. Resilient Media Pipeline:
-
-    slskd Integration: * Search slskd for the best match (prioritize islossless or 320kbps).
-
-        Use a Resiliency Policy: If a transfer fails or a peer goes offline, implement an exponential backoff retry and a "Search Fallback" to try a different peer.
-
-    Yoto Uploader: Use the yoto.dev API to request a uploadUrl, PUT the media, and link it to the user's library.
-
-5. Initial Task: "Please generate the build.gradle.kts with ktor-server-html-builder and ktor-server-htmx dependencies, the SQLite schema for Users/Tasks, and the SlskdClient that includes the search-selection logic."
+*   `src/main/kotlin/com/yotoseek/db`: Database schema definitions (Users, Tasks).
+*   `src/main/kotlin/com/yotoseek/client`: API clients (SlskdClient).
+*   `src/main/kotlin/com/yotoseek/Application.kt`: Server entry point and module configuration.
