@@ -33,6 +33,7 @@ dependencies {
     implementation("io.ktor:ktor-server-sessions-jvm")
     implementation("io.ktor:ktor-server-call-logging-jvm")
     implementation("io.ktor:ktor-server-status-pages-jvm")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.webjars.npm:htmx.org:1.9.12")
 
