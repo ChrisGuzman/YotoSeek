@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+    implementation("xyz.gianlu.librespot:librespot-java:1.6.5")
     implementation(platform("io.ktor:ktor-bom:$ktor_version"))
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
